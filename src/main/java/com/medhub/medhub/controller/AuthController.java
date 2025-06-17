@@ -3,10 +3,9 @@ package com.medhub.medhub.controller;
 import com.medhub.medhub.dto.AuthRequest;
 import com.medhub.medhub.dto.AuthResponse;
 import com.medhub.medhub.entity.AppUser;
-import com.medhub.medhub.repository.UserRepository;
+import com.medhub.medhub.repository.AppUserRepository;
 import com.medhub.medhub.security.JwtUtil;
 import com.medhub.medhub.service.CustomUserDetailsService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,12 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private AuthenticationManager authenticationManager;
-    private UserRepository userRepository;
+    private AppUserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private JwtUtil jwtUtil;
     private CustomUserDetailsService userDetailsService;
 
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, CustomUserDetailsService userDetailsService){
+    public AuthController(AuthenticationManager authenticationManager, AppUserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, CustomUserDetailsService userDetailsService){
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;

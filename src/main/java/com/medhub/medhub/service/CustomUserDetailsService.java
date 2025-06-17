@@ -1,7 +1,7 @@
 package com.medhub.medhub.service;
 
 import com.medhub.medhub.entity.AppUser;
-import com.medhub.medhub.repository.UserRepository;
+import com.medhub.medhub.repository.AppUserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,9 +14,9 @@ import java.util.Collections;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private UserRepository userRepository;
+    private AppUserRepository userRepository;
 
-    public CustomUserDetailsService(UserRepository userRepository){
+    public CustomUserDetailsService(AppUserRepository userRepository){
         this.userRepository = userRepository;
     }
 
