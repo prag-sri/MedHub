@@ -1,17 +1,13 @@
 package com.medhub.medhub.service;
 
 import com.medhub.medhub.dto.AppointmentDTO;
-import com.medhub.medhub.dto.PatientDTO;
-import com.medhub.medhub.entity.AppUser;
 import com.medhub.medhub.entity.Appointment;
 import com.medhub.medhub.entity.Doctor;
 import com.medhub.medhub.entity.Patient;
 import com.medhub.medhub.exception.AppointmentNotFoundException;
 import com.medhub.medhub.exception.DoctorNotFoundException;
 import com.medhub.medhub.exception.PatientNotFoundException;
-import com.medhub.medhub.exception.UserNotFoundException;
 import com.medhub.medhub.mapper.AppointmentMapper;
-import com.medhub.medhub.mapper.PatientMapper;
 import com.medhub.medhub.repository.AppointmentRepository;
 import com.medhub.medhub.repository.DoctorRepository;
 import com.medhub.medhub.repository.PatientRepository;
@@ -40,7 +36,7 @@ public class AppointmentService {
                 .orElseThrow(() -> new PatientNotFoundException("Patient with ID: " + dto.getPatientId() + " not found!"));
 
         Appointment appointment = AppointmentMapper.toEntity(dto,doctor,patient);
-        return AppointmentMapper.toDTO(appointment);
+        return AppointmentMapper.toDTO(appointmentRepository.save(appointment));
     }
 
     public AppointmentDTO getAppointmentById(Long id) {
