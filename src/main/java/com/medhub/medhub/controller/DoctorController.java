@@ -2,6 +2,7 @@ package com.medhub.medhub.controller;
 
 import com.medhub.medhub.dto.DoctorDTO;
 import com.medhub.medhub.service.DoctorService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +25,7 @@ public class DoctorController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<DoctorDTO> createDoctor(@RequestBody DoctorDTO dto){
+    public ResponseEntity<DoctorDTO> createDoctor(@Valid @RequestBody DoctorDTO dto){
         return ResponseEntity.status(HttpStatus.CREATED).body(doctorService.createDoctor(dto));
     }
 
