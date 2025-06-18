@@ -8,6 +8,9 @@ import com.medhub.medhub.exception.UserNotFoundException;
 import com.medhub.medhub.mapper.DoctorMapper;
 import com.medhub.medhub.repository.AppUserRepository;
 import com.medhub.medhub.repository.DoctorRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,12 +33,14 @@ public class DoctorService {
         return DoctorMapper.toDTO(doctorRepository.save(doctor));
     }
 
+    @Cacheable(value = "doctors", key = "#id")
     public DoctorDTO getDoctorById(Long id) {
         Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with ID: " + id + " not found!"));
         return DoctorMapper.toDTO(doctor);
     }
 
+    @CachePut(value = "doctors", key = "#id")
     public DoctorDTO updateDoctor(Long id, DoctorDTO dto) {
         Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with ID: " + id + " not found!"));
@@ -47,6 +52,7 @@ public class DoctorService {
         return DoctorMapper.toDTO(doctorRepository.save(doctor));
     }
 
+    @CacheEvict(value = "doctors", key = "#id")
     public void deleteDoctor(Long id) {
         doctorRepository.findById(id)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with ID: " + id + " not found!"));
