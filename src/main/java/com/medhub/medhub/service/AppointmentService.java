@@ -8,6 +8,7 @@ import com.medhub.medhub.exception.AppointmentNotFoundException;
 import com.medhub.medhub.exception.DoctorNotFoundException;
 import com.medhub.medhub.exception.PatientNotFoundException;
 import com.medhub.medhub.mapper.AppointmentMapper;
+import com.medhub.medhub.messaging.AppointmentProducer;
 import com.medhub.medhub.repository.AppointmentRepository;
 import com.medhub.medhub.repository.DoctorRepository;
 import com.medhub.medhub.repository.PatientRepository;
@@ -21,11 +22,13 @@ public class AppointmentService {
     private AppointmentRepository appointmentRepository;
     private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
+    private AppointmentProducer appointmentProducer;
 
-    public AppointmentService(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository) {
+    public AppointmentService(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AppointmentProducer appointmentProducer) {
         this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
+        this.appointmentProducer = appointmentProducer;
     }
 
     public AppointmentDTO createAppointment(AppointmentDTO dto) {
@@ -36,7 +39,12 @@ public class AppointmentService {
                 .orElseThrow(() -> new PatientNotFoundException("Patient with ID: " + dto.getPatientId() + " not found!"));
 
         Appointment appointment = AppointmentMapper.toEntity(dto,doctor,patient);
-        return AppointmentMapper.toDTO(appointmentRepository.save(appointment));
+        AppointmentDTO savedAppointment = AppointmentMapper.toDTO(appointmentRepository.save(appointment));
+
+        // Sending message to RabbitMQ
+        appointmentProducer.send("Appointment confirmed with ID: " + savedAppointment.getId());
+
+        return savedAppointment;
     }
 
     public AppointmentDTO getAppointmentById(Long id) {

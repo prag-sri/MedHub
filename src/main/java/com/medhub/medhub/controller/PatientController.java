@@ -19,7 +19,7 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN'")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PatientDTO> createPatient(@RequestBody PatientDTO dto){
         return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createPatient(dto));
