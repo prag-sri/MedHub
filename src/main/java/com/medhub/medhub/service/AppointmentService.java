@@ -23,12 +23,14 @@ public class AppointmentService {
     private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
     private AppointmentProducer appointmentProducer;
+    private KafkaEventProducer kafkaEventProducer;
 
-    public AppointmentService(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AppointmentProducer appointmentProducer) {
+    public AppointmentService(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AppointmentProducer appointmentProducer, KafkaEventProducer kafkaEventProducer) {
         this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
         this.appointmentProducer = appointmentProducer;
+        this.kafkaEventProducer = kafkaEventProducer;
     }
 
     public AppointmentDTO createAppointment(AppointmentDTO dto) {
@@ -43,6 +45,9 @@ public class AppointmentService {
 
         // Sending message to RabbitMQ
         appointmentProducer.send("Appointment confirmed with ID: " + savedAppointment.getId());
+
+        // Sending message to Kafka
+        kafkaEventProducer.sendEvent("New appointment booked with ID: " + savedAppointment.getId());
 
         return savedAppointment;
     }
