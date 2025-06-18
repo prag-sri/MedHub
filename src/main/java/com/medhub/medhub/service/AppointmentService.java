@@ -14,6 +14,7 @@ import com.medhub.medhub.repository.DoctorRepository;
 import com.medhub.medhub.repository.PatientRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -24,13 +25,15 @@ public class AppointmentService {
     private PatientRepository patientRepository;
     private AppointmentProducer appointmentProducer;
     private KafkaEventProducer kafkaEventProducer;
+    private EventLogService eventLogService;
 
-    public AppointmentService(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AppointmentProducer appointmentProducer, KafkaEventProducer kafkaEventProducer) {
+    public AppointmentService(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, AppointmentProducer appointmentProducer, KafkaEventProducer kafkaEventProducer, EventLogService eventLogService) {
         this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
         this.appointmentProducer = appointmentProducer;
         this.kafkaEventProducer = kafkaEventProducer;
+        this.eventLogService = eventLogService;
     }
 
     public AppointmentDTO createAppointment(AppointmentDTO dto) {
@@ -48,6 +51,14 @@ public class AppointmentService {
 
         // Sending message to Kafka
         kafkaEventProducer.sendEvent("New appointment booked with ID: " + savedAppointment.getId());
+
+        // audit log
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
+        String formattedTime = savedAppointment.getAppointmentTime().format(formatter);
+        eventLogService.log(
+                "APPOINTMENT_CREATED",
+                "Appointment ID: " + savedAppointment.getId() + ", Time: " + formattedTime
+        );
 
         return savedAppointment;
     }
