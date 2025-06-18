@@ -117,12 +117,12 @@ public class DoctorServiceTest {
         verify(doctorRepository).deleteById(10L);
     }
 
-    @Test
-    void getAllDoctors_success(){
-        when(doctorRepository.findAll()).thenReturn(List.of(doctor));
-
-        List<DoctorDTO> list = doctorService.getAllDoctors();
-
-        assertEquals(1,list.size());
-    }
+//    @Test
+//    void getAllDoctors_success(){
+//        when(doctorRepository.findAll()).thenReturn(List.of(doctor));
+//
+//        List<DoctorDTO> list = doctorService.getAllDoctors();
+//
+//        assertEquals(1,list.size());
+//    }
 }

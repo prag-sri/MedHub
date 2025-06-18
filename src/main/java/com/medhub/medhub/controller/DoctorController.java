@@ -2,6 +2,9 @@ package com.medhub.medhub.controller;
 
 import com.medhub.medhub.dto.DoctorDTO;
 import com.medhub.medhub.service.DoctorService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,7 +48,10 @@ public class DoctorController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<List<DoctorDTO>> getAllDoctors(){
-        return ResponseEntity.status(HttpStatus.OK).body(doctorService.getAllDoctors());
+    public Page<DoctorDTO> getAllDoctors(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "0") int size){
+        Pageable pageable = PageRequest.of(page,size);
+        return doctorService.getAllDoctors(pageable);
     }
 }

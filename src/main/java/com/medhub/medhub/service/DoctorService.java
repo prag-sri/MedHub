@@ -11,6 +11,8 @@ import com.medhub.medhub.repository.DoctorRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,10 +61,8 @@ public class DoctorService {
         doctorRepository.deleteById(id);
     }
 
-    public List<DoctorDTO> getAllDoctors() {
-        return doctorRepository.findAll()
-                .stream()
-                .map(DoctorMapper::toDTO)
-                .toList();
+    public Page<DoctorDTO> getAllDoctors(Pageable pageable) {
+        return doctorRepository.findAll(pageable)
+                .map(DoctorMapper::toDTO);
     }
 }
